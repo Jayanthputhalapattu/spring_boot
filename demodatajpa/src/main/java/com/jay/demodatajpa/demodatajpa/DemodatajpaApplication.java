@@ -75,10 +75,15 @@ public class DemodatajpaApplication {
 	   			//RELATIONSHIPS
 	   ProcessServImpl prService = (ProcessServImpl)context.getBean("processr");
 	   prService.insertProcessr(new ProcessDTO(1, "Snapdragon 645", 2000));
-	   
+	   prService.insertProcessr(new ProcessDTO(2,"Snapdragon 888",40000));
 	   
 	   			//Named Query and query operations
 	   service.findByProcess(1);
+	   			//Update operation
+	   service.updateProcessById(878, 2);
+	   
+	   
+	   
 	   
 	 //PRINTING AT END OF OPERATIONS
 	   System.out.println("PRINTING AT END OF ALL OPERATIONS : ");

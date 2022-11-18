@@ -87,4 +87,10 @@ public class PhoneServiceImpl {
     {
     	repo.findbyproces(no).forEach(p->System.out.println(p));
     }
+    
+    public void updateProcessById(int id,int processId)
+    {
+    	repo.updateProcessById(id, processId);
+        System.out.println("Update success with : id " + id  + " processID :" + processId);;
+    }
 }

@@ -39,6 +39,10 @@ public Processr(int no, String modelName, double cost) {
 	this.modelName = modelName;
 	this.cost = cost;
 }
+public Processr(int no) {
+	super();
+	this.no = no;
+}
 public Processr() {
 	super();
 }
