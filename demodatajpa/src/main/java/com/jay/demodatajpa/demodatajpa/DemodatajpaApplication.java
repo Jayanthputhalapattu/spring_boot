@@ -44,7 +44,11 @@ public class DemodatajpaApplication {
 	   service.addPhone(new PhoneDTO(9812,"Celkon","C7"));
 	   service.addPhone(new PhoneDTO(878,"Infix","pro 10",new Processr(1, "Snapdragon 645", 2000)));
 	   service.addPhone(new PhoneDTO(90,"Nokia","a 5",new Processr(1, "Snapdragon 645", 2000)));
-//	   System.out.println(service.getPhone(123));
+	   service.addPhone(new PhoneDTO(66,"Realme","9 pro plus" ,new Processr(81,"Octacore 890",8000)));
+	   service.addPhone(new PhoneDTO(169, "Samsung", "S22"));
+	   service.updateProcessById(909, 1);
+	   service.updateProcessById(981, 2);
+	   //	   System.out.println(service.getPhone(123));
 //	   service.getAllPhones().forEach(p->System.out.println(p));
 	   
 	   //				DELETE OPERATION
@@ -52,6 +56,7 @@ public class DemodatajpaApplication {
 	   
 	   			//Update operation 
 	   service.updatePhone(1234, "9 pro");
+	   service.updateProcessById(169,2);
 	   
 	   
 	   			//Pagination and sorting
@@ -76,7 +81,7 @@ public class DemodatajpaApplication {
 	   ProcessServImpl prService = (ProcessServImpl)context.getBean("processr");
 	   prService.insertProcessr(new ProcessDTO(1, "Snapdragon 645", 2000));
 	   prService.insertProcessr(new ProcessDTO(2,"Snapdragon 888",40000));
-	   
+	   prService.insertProcessr(new ProcessDTO(4,"Apple superspeed",50000));
 	   			//Named Query and query operations
 	   service.findByProcess(1);
 	   			//Update operation

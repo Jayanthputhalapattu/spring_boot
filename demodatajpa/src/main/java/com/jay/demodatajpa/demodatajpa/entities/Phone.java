@@ -15,7 +15,7 @@ import com.jay.demodatajpa.demodatajpa.dto.PhoneDTO;
 public class Phone {
 	@Id
     private int imei;
-	@Column(name = "phone_number")
+//	@Column(name = "phone_number")
     private String phoneName;
 	@Column(name = "model_name")
     private String modelName;

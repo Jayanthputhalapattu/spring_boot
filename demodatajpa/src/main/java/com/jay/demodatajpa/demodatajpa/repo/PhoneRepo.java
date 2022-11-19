@@ -24,4 +24,7 @@ public interface PhoneRepo extends JpaRepository<Phone, Integer>{
     @Modifying(clearAutomatically = true,flushAutomatically = true)
     @Transactional
     public void updateProcessById(int id,int process_id);
+    
+    @Query("select p from Phone p where p.phoneName = ?1 and p.process.no = ?2")
+    public List<Phone> findByPhoneNameandProcess(String phoneName,int no);
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +23,7 @@ import com.jay.demodatajpa.demodatajpa.repo.PhoneRepo;
 public class PhoneServiceImpl {
 	@Autowired
 	private PhoneRepo repo;
-	
+	ModelMapper mapper  = new ModelMapper();
 	public List<PhoneDTO> getAllPhones()
 	{
 	List<Phone> optList = repo.findAll();
@@ -92,5 +93,11 @@ public class PhoneServiceImpl {
     {
     	repo.updateProcessById(id, processId);
         System.out.println("Update success with : id " + id  + " processID :" + processId);;
+    }
+    public List<PhoneDTO> findByPhoneNameandProcess(String phoneName,int process)
+    {
+    	return repo.findByPhoneNameandProcess(phoneName, process).stream()
+    			.map(p->mapper.map(p, PhoneDTO.class))
+    			.collect(Collectors.toList());
     }
 }
