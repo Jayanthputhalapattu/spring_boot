@@ -21,7 +21,7 @@ public interface PhoneRepo extends JpaRepository<Phone, Integer>{
     List<Phone> findbyproces(int no);
     
     @Query("update Phone p set p.process.no = ?2 where p.id = ?1")
-    @Modifying
+    @Modifying(clearAutomatically = true,flushAutomatically = true)
     @Transactional
     public void updateProcessById(int id,int process_id);
 }
