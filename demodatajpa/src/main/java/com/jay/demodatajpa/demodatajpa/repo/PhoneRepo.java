@@ -1,6 +1,7 @@
 package com.jay.demodatajpa.demodatajpa.repo;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -9,10 +10,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.jay.demodatajpa.demodatajpa.dto.PhoneDTO;
 import com.jay.demodatajpa.demodatajpa.entities.Phone;
 
 
-//@Repository
+@Repository
 public interface PhoneRepo extends JpaRepository<Phone, Integer>{
     List<Phone> findByPhoneName(String phoneName);
     
@@ -27,4 +29,10 @@ public interface PhoneRepo extends JpaRepository<Phone, Integer>{
     
     @Query("select p from Phone p where p.phoneName = ?1 and p.process.no = ?2")
     public List<Phone> findByPhoneNameandProcess(String phoneName,int no);
+    
+    
+    //whenever you are passing the collection framework then use IN variable
+    @Query("SELECT p FROM Phone p WHERE p.phoneName IN (?1)")
+    public List<Phone> findPhonesByName(List<String> names);
+    
 }

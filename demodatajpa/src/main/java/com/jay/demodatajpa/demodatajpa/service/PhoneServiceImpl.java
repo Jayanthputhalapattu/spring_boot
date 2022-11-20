@@ -4,9 +4,12 @@ package com.jay.demodatajpa.demodatajpa.service;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.hibernate.annotations.common.util.impl.LoggerFactory;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +27,7 @@ public class PhoneServiceImpl {
 	@Autowired
 	private PhoneRepo repo;
 	ModelMapper mapper  = new ModelMapper();
+//	private static Logger logger = LoggerFactory.logger(PhoneServiceImpl.class)
 	public List<PhoneDTO> getAllPhones()
 	{
 	List<Phone> optList = repo.findAll();
@@ -98,6 +102,14 @@ public class PhoneServiceImpl {
     {
     	return repo.findByPhoneNameandProcess(phoneName, process).stream()
     			.map(p->mapper.map(p, PhoneDTO.class))
+    			.collect(Collectors.toList());
+    }
+    
+    public List<PhoneDTO> findPhonesByName(List<String> names)
+    {
+    	return repo.findPhonesByName(names).stream()
+    			.map(p->p.createPhoneDTO(p))
+//    			.sorted((p1,p2)->p1.getPhoneName().compareTo(p2.getPhoneName()))
     			.collect(Collectors.toList());
     }
 }

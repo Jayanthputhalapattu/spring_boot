@@ -11,4 +11,5 @@ public interface ProcessServiceRepo extends JpaRepository<Processr, Integer>{
 	@Query("update processor p set p.cost = ?2 where p.no = ?1")
 	@Modifying
 	public void updateCostById(int no,int newCost);
+	
 }
