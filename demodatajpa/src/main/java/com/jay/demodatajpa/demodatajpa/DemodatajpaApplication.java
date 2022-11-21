@@ -2,13 +2,17 @@ package com.jay.demodatajpa.demodatajpa;
 
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.jay.demodatajpa.demodatajpa.dto.PhoneDTO;
 import com.jay.demodatajpa.demodatajpa.dto.ProcessDTO;
@@ -19,12 +23,13 @@ import com.jay.demodatajpa.demodatajpa.service.PhoneServiceImpl;
 import com.jay.demodatajpa.demodatajpa.service.ProcessServImpl;
 
 @SpringBootApplication
-public class DemodatajpaApplication {
+public class DemodatajpaApplication implements WebMvcConfigurer{
 
 	public static void main(String[] args) {
 		
 		AbstractApplicationContext context = (AbstractApplicationContext)SpringApplication.run(DemodatajpaApplication.class, args);
 	
+		
 	   PhoneServiceImpl service = (PhoneServiceImpl)context.getBean("phoneService");
 	   
 	   //Addding data to the database creating dtos
@@ -42,12 +47,14 @@ public class DemodatajpaApplication {
 	   service.addPhone(new PhoneDTO(909,"Samsung","M21"));
 	   service.addPhone(new PhoneDTO(76, "IQOO", "9 se"));
 	   service.addPhone(new PhoneDTO(9812,"Celkon","C7"));
-	   service.addPhone(new PhoneDTO(878,"Infix","pro 10",new Processr(1, "Snapdragon 645", 2000)));
-	   service.addPhone(new PhoneDTO(90,"Nokia","a 5",new Processr(1, "Snapdragon 645", 2000)));
-	   service.addPhone(new PhoneDTO(66,"Realme","9 pro plus" ,new Processr(81,"Octacore 890",8000)));
+	   service.addPhone(new PhoneDTO(878,"Infix","pro 10",new ProcessDTO(1, "Snapdragon 645", 2000)));
+	   service.addPhone(new PhoneDTO(90,"Nokia","a 5",new ProcessDTO(1, "Snapdragon 645", 2000)));
+	   service.addPhone(new PhoneDTO(66,"Realme","9 pro plus" ,new ProcessDTO(81,"Octacore 890",8000)));
 	   service.addPhone(new PhoneDTO(169, "Samsung", "S22"));
 	   service.updateProcessById(909, 1);
 	   service.updateProcessById(981, 2);
+	   
+	   service.addPhone(new PhoneDTO(444, "Google", "Pixel S", new ProcessDTO(67, "G-NanoProcessor", 50000)));
 	   //	   System.out.println(service.getPhone(123));
 //	   service.getAllPhones().forEach(p->System.out.println(p));
 	   
@@ -96,7 +103,17 @@ public class DemodatajpaApplication {
 	   
 	}
   
+	@Bean
+	public ModelMapper modelMapper()
+	{
+		return new ModelMapper();
+	}
 	
+	@Override
+	public void addCorsMappings(CorsRegistry cr)
+	{
+//		cr.addMapping("/**").allowedMethods("GET","POST");
+	}
 	
 	
 }

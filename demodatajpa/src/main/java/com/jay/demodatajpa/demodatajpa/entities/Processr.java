@@ -50,12 +50,12 @@ public Processr() {
 public String toString() {
 	return "Process [no=" + no + ", modelName=" + modelName + ", cost=" + cost + "]";
 }
-   public ProcessDTO createProcessDTO(Processr process)
-   {
-	   ProcessDTO dto = new ProcessDTO();
-	   dto.setNo(process.getNo());
-	   dto.setModelName(process.modelName);
-	   dto.setCost(process.getCost());
-	   return dto;
-   }
+//   public ProcessDTO createProcessDTO(Processr process)
+//   {
+//	   ProcessDTO dto = new ProcessDTO();
+//	   dto.setNo(process.getNo());
+//	   dto.setModelName(process.modelName);
+//	   dto.setCost(process.getCost());
+//	   return dto;
+//   }
 }

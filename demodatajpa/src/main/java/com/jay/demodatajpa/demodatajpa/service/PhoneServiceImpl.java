@@ -11,11 +11,15 @@ import org.hibernate.annotations.common.util.impl.LoggerFactory;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.jay.demodatajpa.demodatajpa.ExceptionHandle.PhoneNotFoundException;
+import com.jay.demodatajpa.demodatajpa.constants.AllConstants;
 import com.jay.demodatajpa.demodatajpa.dto.PhoneDTO;
 import com.jay.demodatajpa.demodatajpa.entities.Phone;
 import com.jay.demodatajpa.demodatajpa.repo.PhoneRepo;
@@ -23,15 +27,21 @@ import com.jay.demodatajpa.demodatajpa.repo.PhoneRepo;
 
 
 @Service("phoneService")
+@PropertySource("classpath:exceptionMessages.properties")
 public class PhoneServiceImpl {
 	@Autowired
 	private PhoneRepo repo;
-	ModelMapper mapper  = new ModelMapper();
+	
+	@Autowired
+	private ModelMapper mapper;
+	
+	@Autowired
+	private Environment env;
 //	private static Logger logger = LoggerFactory.logger(PhoneServiceImpl.class)
 	public List<PhoneDTO> getAllPhones()
 	{
 	List<Phone> optList = repo.findAll();
-	List<PhoneDTO> dto = optList.stream().map(p->p.createPhoneDTO(p))
+	List<PhoneDTO> dto = optList.stream().map(p->mapper.map(p, PhoneDTO.class))
 			.sorted((p1,p2)->p1.getPhoneName().compareTo(p2.getPhoneName()))
 //			.sorted((p1,p2)->p1.getModelName().compareTo(p2.getModelName()))
 			.collect(Collectors.toList());
@@ -39,19 +49,28 @@ public class PhoneServiceImpl {
 	return dto; 
 		
 	}
-    public PhoneDTO getPhone(int imei)
+	
+		//Added exception Handling
+    public PhoneDTO getPhone(int imei) throws PhoneNotFoundException
     {
     	Optional<Phone> phOpt = repo.findById(imei);
-    	Phone ph = phOpt.get();
-    	PhoneDTO dto = ph.createPhoneDTO(ph);
-    	
-    	return dto;
+    	if (phOpt.isPresent())
+    	{
+    		return mapper.map(phOpt.get(), PhoneDTO.class);
+    	}
+    	else {
+//    		System.out.println(env.getProperty("phone.not.found"));
+    		System.out.println(AllConstants.PHONE_NOT_FOUND.toString());
+    		throw new PhoneNotFoundException(
+    				env.getProperty(AllConstants.PHONE_NOT_FOUND.toString()));
+    	}
+    
     	
     	
     }
-    public void addPhone(PhoneDTO dto)
+    public void addPhone(PhoneDTO dto) 
     {
-    	repo.saveAndFlush(dto.createPhoneEntity(dto));
+    	repo.saveAndFlush(mapper.map(dto, Phone.class));
         System.out.println("Data added succesfully check that in database");
     }
     public void deletePhone(int imei)
@@ -85,7 +104,7 @@ public class PhoneServiceImpl {
     public List<PhoneDTO> findByPhoneName(String phoneName)
     {
     	return repo.findByPhoneName(phoneName).stream()
-    			.map(ph->ph.createPhoneDTO(ph))
+    			.map(ph->mapper.map(ph, PhoneDTO.class))
     			.collect(Collectors.toList());
     }
     public void findByProcess(int no)
@@ -95,6 +114,7 @@ public class PhoneServiceImpl {
     
     public void updateProcessById(int id,int processId)
     {
+    
     	repo.updateProcessById(id, processId);
         System.out.println("Update success with : id " + id  + " processID :" + processId);;
     }
@@ -108,7 +128,7 @@ public class PhoneServiceImpl {
     public List<PhoneDTO> findPhonesByName(List<String> names)
     {
     	return repo.findPhonesByName(names).stream()
-    			.map(p->p.createPhoneDTO(p))
+    			.map(ph->mapper.map(ph, PhoneDTO.class))
 //    			.sorted((p1,p2)->p1.getPhoneName().compareTo(p2.getPhoneName()))
     			.collect(Collectors.toList());
     }

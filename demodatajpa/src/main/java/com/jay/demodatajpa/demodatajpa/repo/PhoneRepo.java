@@ -23,7 +23,7 @@ public interface PhoneRepo extends JpaRepository<Phone, Integer>{
     List<Phone> findbyproces(int no);
     
     @Query("update Phone p set p.process.no = ?2 where p.id = ?1")
-    @Modifying(clearAutomatically = true,flushAutomatically = true)
+    @Modifying
     @Transactional
     public void updateProcessById(int id,int process_id);
     
@@ -34,5 +34,8 @@ public interface PhoneRepo extends JpaRepository<Phone, Integer>{
     //whenever you are passing the collection framework then use IN variable
     @Query("SELECT p FROM Phone p WHERE p.phoneName IN (?1)")
     public List<Phone> findPhonesByName(List<String> names);
+    
+    
+   
     
 }
