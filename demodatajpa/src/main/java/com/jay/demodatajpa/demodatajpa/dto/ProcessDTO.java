@@ -1,8 +1,13 @@
 package com.jay.demodatajpa.demodatajpa.dto;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 import com.jay.demodatajpa.demodatajpa.entities.Processr;
 
 public class ProcessDTO {
+	@NotNull(message = "{process.id.empty}")
   private int no;
+	@NotEmpty(message = "{processor_name_empty}")
   private String modelName;
   private double cost;
 public int getNo() {
@@ -37,13 +42,13 @@ public String toString() {
 	return "ProcessDTO [no=" + no + ", modelName=" + modelName + ", cost=" + cost + "]";
 }
   
- public Processr createProcessEntity(ProcessDTO prdto)
- {
-	 Processr process = new Processr();
-	 process.setNo(prdto.getNo());
-	 process.setModelName(prdto.getModelName());
-	 process.setCost(prdto.getCost());
-	 return process;
-	 
- }
+// public Processr createProcessEntity(ProcessDTO prdto)
+// {
+//	 Processr process = new Processr();
+//	 process.setNo(prdto.getNo());
+//	 process.setModelName(prdto.getModelName());
+//	 process.setCost(prdto.getCost());
+//	 return process;
+//	 
+// }
 }

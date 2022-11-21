@@ -7,15 +7,19 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotEmpty;
 
-import com.jay.demodatajpa.demodatajpa.dto.PhoneDTO;
+import org.springframework.validation.annotation.Validated;
+
 
 
 @Entity
 public class Phone {
 	@Id
+	
     private int imei;
-	@Column(name = "phone_number")
+//	@Column(name = "phone_number")
+	@NotEmpty(message ="{phone.not.empty}")
     private String phoneName;
 	@Column(name = "model_name")
     private String modelName;
@@ -25,8 +29,8 @@ public class Phone {
 	public Processr getProcess() {
 		return process;
 	}
-	public void setProcess(Processr process) {
-		this.process = process;
+	public void setProcess(Processr processDTO) {
+		this.process = processDTO;
 	}
 	public Phone(int imei, String phoneName, String modelName, Processr process) {
 		super();
@@ -70,13 +74,5 @@ public class Phone {
 		this.phoneName = phoneName;
 		this.modelName = modelName;
 	}
-	public PhoneDTO createPhoneDTO(Phone ph)
-    {
-    	PhoneDTO dto = new PhoneDTO();
-    	dto.setImei(ph.getImei());
-    	dto.setModelName(ph.getModelName());
-    	dto.setPhoneName(ph.getPhoneName());
-    	dto.setProcess(ph.getProcess());
-    	return dto;	
-    }
+	
 }
