@@ -33,8 +33,13 @@ import com.jay.demodatajpa.demodatajpa.entities.Phone;
 import com.jay.demodatajpa.demodatajpa.entities.Processr;
 import com.jay.demodatajpa.demodatajpa.service.PhoneServiceImpl;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
 @RestController
 @RequestMapping("/phones")
+@OpenAPIDefinition(info = @Info(title = "Phone controller apis"))
 public class PhoneController {
 	@Autowired
      private PhoneServiceImpl service;
@@ -42,6 +47,7 @@ public class PhoneController {
 	private ModelMapper mapper;
 	
 	@GetMapping
+	@ApiResponse(description="Get all phones from the resp",responseCode = "900")
 	public ResponseEntity<List<PhoneDTO>>  getAllPhones()
 	{
 	return ResponseEntity.status(HttpStatus.OK).body(service.getAllPhones());
