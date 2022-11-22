@@ -10,7 +10,7 @@ import com.jay.demodatajpa.demodatajpa.entities.Processr;
 
 
 public class PhoneDTO {
-	@NotNull
+	@NotNull(message = "{phone.id.empty}")
 	private int imei;
 
 	public ProcessDTO getProcess() {
@@ -21,8 +21,9 @@ public class PhoneDTO {
 		this.process = process;
 	}
 
-	@NotEmpty(message = "{phone.id.empty},{inputs.not.entered}")
+	@NotEmpty(message = "{phone.name.empty},{inputs.not.entered}")
 	private String phoneName;
+	@NotEmpty(message = "{phone.model.empty}")
 	private String modelName;
 	private ProcessDTO process;
 

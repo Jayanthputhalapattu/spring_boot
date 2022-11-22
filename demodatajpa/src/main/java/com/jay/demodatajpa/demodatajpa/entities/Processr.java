@@ -12,7 +12,7 @@ public class Processr {
    private int no;
 	@Column(name = "model_name")
    private String modelName;
-   private double cost;
+   private int cost;
    
    
 public int getNo() {
@@ -30,10 +30,10 @@ public void setModelName(String modelName) {
 public double getCost() {
 	return cost;
 }
-public void setCost(double cost) {
+public void setCost(int cost) {
 	this.cost = cost;
 }
-public Processr(int no, String modelName, double cost) {
+public Processr(int no, String modelName, int cost) {
 	super();
 	this.no = no;
 	this.modelName = modelName;

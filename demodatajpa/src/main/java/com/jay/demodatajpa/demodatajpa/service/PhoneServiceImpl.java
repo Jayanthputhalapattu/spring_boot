@@ -19,10 +19,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.jay.demodatajpa.demodatajpa.ExceptionHandle.PhoneNotFoundException;
+import com.jay.demodatajpa.demodatajpa.ExceptionHandle.ProcessorNotFoundException;
 import com.jay.demodatajpa.demodatajpa.constants.AllConstants;
 import com.jay.demodatajpa.demodatajpa.dto.PhoneDTO;
 import com.jay.demodatajpa.demodatajpa.entities.Phone;
+import com.jay.demodatajpa.demodatajpa.entities.Processr;
 import com.jay.demodatajpa.demodatajpa.repo.PhoneRepo;
+import com.jay.demodatajpa.demodatajpa.repo.ProcessServiceRepo;
 
 
 
@@ -31,6 +34,9 @@ import com.jay.demodatajpa.demodatajpa.repo.PhoneRepo;
 public class PhoneServiceImpl {
 	@Autowired
 	private PhoneRepo repo;
+	
+	@Autowired
+	private ProcessServiceRepo prepo;
 	
 	@Autowired
 	private ModelMapper mapper;
@@ -73,9 +79,17 @@ public class PhoneServiceImpl {
     	repo.saveAndFlush(mapper.map(dto, Phone.class));
         System.out.println("Data added succesfully check that in database");
     }
-    public void deletePhone(int imei)
+    public void deletePhone(int imei) throws PhoneNotFoundException
     {
-    	repo.deleteById(imei);
+    	Optional<Phone> phOpt = repo.findById(imei);
+    	if (phOpt.isPresent())
+    	{
+    		repo.delete(phOpt.get());
+    	}
+    	else {
+    		throw new PhoneNotFoundException(env.getProperty(AllConstants.PHONE_NOT_FOUND.toString()));
+    	}
+    	
     	
     	System.out.println("Data deleted Successfully");
     }
@@ -112,11 +126,31 @@ public class PhoneServiceImpl {
     	repo.findbyproces(no).forEach(p->System.out.println(p));
     }
     
-    public void updateProcessById(int id,int processId)
+    public void updateProcessById(int id,int processId) throws PhoneNotFoundException,ProcessorNotFoundException
     {
+    	Optional<Phone> phOptional = repo.findById(id);
+    		
+    	//Makwe  a call to the processor repo
+    	Optional<Processr> prOptional  = prepo.findById(processId);
+    	if (phOptional.isPresent())
+    	{
+    		if (prOptional.isPresent())
+    		{
+    			repo.updateProcessById(id, processId);
+    			 System.out.println("Update success with : id " + id  + " processID :" + processId);;
+    		}
+    		else {
+    			throw new ProcessorNotFoundException(env.getProperty(AllConstants.PROCESSOR_NOT_FOUND.toString()));
+    		}
+    		
+    	}
+    	else 
+    	{
+    		throw new PhoneNotFoundException(env.getProperty(AllConstants.PHONE_NOT_FOUND.toString()));
+    	}
     
-    	repo.updateProcessById(id, processId);
-        System.out.println("Update success with : id " + id  + " processID :" + processId);;
+    	
+       
     }
     public List<PhoneDTO> findByPhoneNameandProcess(String phoneName,int process)
     {

@@ -50,13 +50,29 @@ public class ProcessServImpl {
     	else
     		throw new ProcessorNotFoundException(env.getProperty(AllConstants.PROCESSOR_NOT_FOUND.toString()));
     }
-    public void deleteProcess(int no)
+    public void deleteProcess(int no) throws ProcessorNotFoundException
     {
-    	repo.deleteById(no);
+    	Optional<Processr> prOptional = repo.findById(no);
+    	if (prOptional.isPresent())
+    	{
+    		repo.delete(prOptional.get());
+    	}
+    	else {
+    		throw new ProcessorNotFoundException(
+        			env.getProperty(AllConstants.PROCESSOR_NOT_FOUND.toString()));
+    	}
+
     }
-    public void updateCostById(int id,int newCost)
+    public void updateCostById(int id,int newCost) throws ProcessorNotFoundException
     {
-    	repo.updateCostById(id,newCost);
+    	Optional<Processr> prOptional = repo.findById(id);
+    	if (prOptional.isPresent())
+    	{
+    		repo.updateCostById(id,newCost);
+    	}
+    	else	
+    		throw new ProcessorNotFoundException(env.getProperty(AllConstants.PROCESSOR_NOT_FOUND.toString()));
+    	
     }
     public void addProcessor(ProcessDTO dto)
     {

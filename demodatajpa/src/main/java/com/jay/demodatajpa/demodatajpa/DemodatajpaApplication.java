@@ -51,8 +51,8 @@ public class DemodatajpaApplication implements WebMvcConfigurer{
 	   service.addPhone(new PhoneDTO(90,"Nokia","a 5",new ProcessDTO(1, "Snapdragon 645", 2000)));
 	   service.addPhone(new PhoneDTO(66,"Realme","9 pro plus" ,new ProcessDTO(81,"Octacore 890",8000)));
 	   service.addPhone(new PhoneDTO(169, "Samsung", "S22"));
-	   service.updateProcessById(909, 1);
-	   service.updateProcessById(981, 2);
+//	   service.updateProcessById(909, 1);
+//	   service.updateProcessById(981, 2);
 	   
 	   service.addPhone(new PhoneDTO(444, "Google", "Pixel S", new ProcessDTO(67, "G-NanoProcessor", 50000)));
 	   //	   System.out.println(service.getPhone(123));
@@ -63,7 +63,7 @@ public class DemodatajpaApplication implements WebMvcConfigurer{
 	   
 	   			//Update operation 
 	   service.updatePhone(1234, "9 pro");
-	   service.updateProcessById(169,2);
+//	   service.updateProcessById(169,2);
 	   
 	   
 	   			//Pagination and sorting
@@ -80,6 +80,7 @@ public class DemodatajpaApplication implements WebMvcConfigurer{
 	   			//Finding by phone name
 	    service.findByPhoneName("Samsung").forEach(ph->System.out.println("phname : " + ph)) ;
 	   
+//	    service.deletePhone(66);
 	   			
 	  
 	   
@@ -92,7 +93,7 @@ public class DemodatajpaApplication implements WebMvcConfigurer{
 	   			//Named Query and query operations
 	   service.findByProcess(1);
 	   			//Update operation
-	   service.updateProcessById(878, 2);
+//	   service.updateProcessById(878, 2);
 	   
 	   
 	   

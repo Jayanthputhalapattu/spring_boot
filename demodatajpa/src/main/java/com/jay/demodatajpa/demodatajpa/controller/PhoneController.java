@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jay.demodatajpa.demodatajpa.ExceptionHandle.PhoneNotFoundException;
+import com.jay.demodatajpa.demodatajpa.ExceptionHandle.ProcessorNotFoundException;
 import com.jay.demodatajpa.demodatajpa.dto.PhoneDTO;
 import com.jay.demodatajpa.demodatajpa.entities.Phone;
 import com.jay.demodatajpa.demodatajpa.entities.Processr;
@@ -40,6 +41,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @RestController
 @RequestMapping("/phones")
 @OpenAPIDefinition(info = @Info(title = "Phone controller apis"))
+//@Validated
 public class PhoneController {
 	@Autowired
      private PhoneServiceImpl service;
@@ -52,15 +54,16 @@ public class PhoneController {
 	{
 	return ResponseEntity.status(HttpStatus.OK).body(service.getAllPhones());
 	}
-
+	
 //	public List<PhoneDTO> getAllPhones()
 //	{
 //		return service.getAllPhones();
 //	}
 	@DeleteMapping("/{id}")
-	private void deletePhone(@PathVariable("id") int id)
+	public void deletePhone(@PathVariable("id") int id) throws PhoneNotFoundException
 	{
 		service.deletePhone(id);
+		
 	}
 	
 	@PostMapping(consumes = "application/json")
@@ -95,6 +98,7 @@ public class PhoneController {
 	}
 	@PutMapping("/{id}/{processid}")
 	public ResponseEntity<String> updateProcessById(@PathVariable("id") int id,@PathVariable("processid") int processid)
+			throws PhoneNotFoundException,ProcessorNotFoundException
 	{
 		service.updateProcessById(id, processid);
 		return ResponseEntity.status(HttpStatus.OK).body("update Success");
