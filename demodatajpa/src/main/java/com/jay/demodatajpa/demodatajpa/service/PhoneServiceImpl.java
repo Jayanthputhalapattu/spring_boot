@@ -21,9 +21,12 @@ import org.springframework.stereotype.Service;
 import com.jay.demodatajpa.demodatajpa.ExceptionHandle.PhoneNotFoundException;
 import com.jay.demodatajpa.demodatajpa.ExceptionHandle.ProcessorNotFoundException;
 import com.jay.demodatajpa.demodatajpa.constants.AllConstants;
+import com.jay.demodatajpa.demodatajpa.dto.CameraDTO;
 import com.jay.demodatajpa.demodatajpa.dto.PhoneDTO;
+import com.jay.demodatajpa.demodatajpa.entities.Camera;
 import com.jay.demodatajpa.demodatajpa.entities.Phone;
 import com.jay.demodatajpa.demodatajpa.entities.Processr;
+import com.jay.demodatajpa.demodatajpa.repo.CameraRepo;
 import com.jay.demodatajpa.demodatajpa.repo.PhoneRepo;
 import com.jay.demodatajpa.demodatajpa.repo.ProcessServiceRepo;
 
@@ -37,6 +40,9 @@ public class PhoneServiceImpl {
 	
 	@Autowired
 	private ProcessServiceRepo prepo;
+	
+	@Autowired
+	private CameraRepo camrepo;
 	
 	@Autowired
 	private ModelMapper mapper;
@@ -77,7 +83,7 @@ public class PhoneServiceImpl {
     public void addPhone(PhoneDTO dto) 
     {
     	repo.saveAndFlush(mapper.map(dto, Phone.class));
-        System.out.println("Data added succesfully check that in database");
+        System.out.println("Data added succesfully check that in database : " + dto);
     }
     public void deletePhone(int imei) throws PhoneNotFoundException
     {
@@ -165,5 +171,17 @@ public class PhoneServiceImpl {
     			.map(ph->mapper.map(ph, PhoneDTO.class))
 //    			.sorted((p1,p2)->p1.getPhoneName().compareTo(p2.getPhoneName()))
     			.collect(Collectors.toList());
+    }
+    public void updateCameraById(int phid,int camid)
+    {
+    	
+    	Phone ph = repo.findById(phid).get();
+    	Camera cam = camrepo.findById(camid).get();
+        
+    	ph.addCamera(cam);
+    	cam.addPhone(ph);
+    	repo.saveAndFlush(ph);
+    	camrepo.saveAndFlush(cam);
+    
     }
 }

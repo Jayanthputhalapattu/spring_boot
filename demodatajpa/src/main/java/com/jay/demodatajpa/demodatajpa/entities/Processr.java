@@ -1,8 +1,11 @@
 package com.jay.demodatajpa.demodatajpa.entities;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import com.jay.demodatajpa.demodatajpa.dto.ProcessDTO;
 
@@ -13,6 +16,7 @@ public class Processr {
 	@Column(name = "model_name")
    private String modelName;
    private int cost;
+   
    
    
 public int getNo() {

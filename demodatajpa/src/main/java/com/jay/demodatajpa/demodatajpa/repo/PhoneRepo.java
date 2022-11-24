@@ -35,7 +35,7 @@ public interface PhoneRepo extends JpaRepository<Phone, Integer>{
     @Query("SELECT p FROM Phone p WHERE p.phoneName IN (?1)")
     public List<Phone> findPhonesByName(List<String> names);
     
-    
+  
    
     
 }

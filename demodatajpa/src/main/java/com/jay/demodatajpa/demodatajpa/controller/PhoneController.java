@@ -103,4 +103,12 @@ public class PhoneController {
 		service.updateProcessById(id, processid);
 		return ResponseEntity.status(HttpStatus.OK).body("update Success");
 	}
+	
+	@PutMapping("/{phoneid}/camera/{cameraid}")
+	public ResponseEntity<String> addCameraById(@PathVariable("phoneid") int phoneid,@PathVariable("cameraid") int cameraid)
+	{
+		service.updateCameraById(phoneid, cameraid);
+		return ResponseEntity.status(HttpStatus.OK)
+				.body("Data updated succesfully ,phoneid : "  + phoneid + " , cameraid : " + cameraid);
+	}
 }
