@@ -11,6 +11,8 @@ import org.hibernate.annotations.common.util.impl.LoggerFactory;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -32,26 +34,34 @@ import com.ms.phone.repo.PhoneRepo;
 public class PhoneServiceImpl {
 	@Autowired
 	private PhoneRepo repo;
-	
-//	@Autowired
-//	private ProcessServiceRepo prepo;
-//	
-//	@Autowired
-//	private CameraRepo camrepo;
-	
+	private String processorUri;
+	private String cameraUri;
 	@Autowired
 	private ModelMapper mapper;
 	
 	@Autowired
 	private Environment env;
+	
+	@Autowired
+	private DiscoveryClient client;
 //	private static Logger logger = LoggerFactory.logger(PhoneServiceImpl.class)
 	public PhoneDTO getProcessorAndCamera(PhoneDTO dto, int processorId)
 	{
+		List<ServiceInstance> instancesProcessor = client.getInstances("processorMS");
+		if (instancesProcessor!=null && !instancesProcessor.isEmpty())
+		{
+			processorUri = instancesProcessor.get(0).getUri().toString();
+		}
+		List<ServiceInstance>  cameraInstances = client.getInstances("cameraMS");
+		if (cameraInstances!=null && !cameraInstances.isEmpty())
+		{
+			cameraUri = cameraInstances.get(0).getUri().toString();
+		}
 		ProcessDTO processdto = new RestTemplate()
-				.getForObject("http://localhost:8020/processors/" +processorId, ProcessDTO.class);
+				.getForObject(processorUri + "/processors/" +processorId, ProcessDTO.class);
 		dto.setProcess(processdto);
 		
-		List<Integer> cameras = new RestTemplate().getForObject("http://localhost:8030/cameras/phones/" + dto.getImei(),List.class);
+		List<Integer> cameras = new RestTemplate().getForObject( cameraUri + "/cameras/phones/" + dto.getImei(),List.class);
 		dto.setCameras(cameras);
 		return dto;
 	}
@@ -61,7 +71,7 @@ public class PhoneServiceImpl {
 	List<Phone> optList = repo.findAll();
 	List<PhoneDTO> dto = optList.stream().map(p->{
 		
-		return getProcessorAndCamera(Phone.createPhoneDTO(p), p.getProcessorId());
+		return Phone.createPhoneDTO(p);
 	})
 //			.sorted((p1,p2)->p1.getPhoneName().compareTo(p2.getPhoneName()))
 			.sorted((p1,p2)->p1.getModelName().compareTo(p2.getModelName()))
@@ -80,7 +90,7 @@ public class PhoneServiceImpl {
 //    		return mapper.map(phOpt.get(), PhoneDTO.class);
     		PhoneDTO dto = Phone.createPhoneDTO(phOpt.get());
     		
-    		return getProcessorAndCamera(dto, dto.getProcess().getNo());
+    		return dto;
     	}
     	else {
 //    		System.out.println(env.getProperty("phone.not.found"));

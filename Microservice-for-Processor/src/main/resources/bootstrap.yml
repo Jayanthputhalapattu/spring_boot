@@ -1,0 +1,17 @@
+server:
+  port: 8020
+
+spring:
+  application:
+    name: processorMS
+  cloud:
+    consul:
+      discovery: 
+        hostname: localhost
+      config:
+        enabled: true
+        prefixes: config
+        defaultContext: application
+        profileSeparator:  '::'
+        format: YAML
+        

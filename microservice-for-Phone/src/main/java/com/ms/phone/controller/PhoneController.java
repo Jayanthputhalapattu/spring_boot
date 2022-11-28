@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -26,8 +27,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.cloud.*;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClient;
 
+import com.ms.phone.LoadBalancerConfig;
 import com.ms.phone.dto.PhoneDTO;
+import com.ms.phone.dto.ProcessDTO;
 import com.ms.phone.exceptionHanlding.PhoneNotFoundException;
 import com.ms.phone.service.PhoneServiceImpl;
 
@@ -38,13 +46,21 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @RestController
 @RequestMapping("/phones")
 @OpenAPIDefinition(info = @Info(title = "Phone controller apis"))
+@EnableAutoConfiguration
+@LoadBalancerClient(name="MyloadBalancer", configuration=LoadBalancerConfig.class)
 //@Validated
 public class PhoneController {
+	private String processorUri;
+	private String cameraUri;
 	@Autowired
      private PhoneServiceImpl service;
+	@Autowired
+	private DiscoveryClient client;
 //     private static Logger logger = LoggerFactory.getLogger(PhoneController.class);
+	@Autowired
 	private ModelMapper mapper;
-	
+    @Autowired
+    private RestTemplate template;
 	@GetMapping
 	@ApiResponse(description="Get all phones from the resp",responseCode = "900")
 	public ResponseEntity<List<PhoneDTO>>  getAllPhones()
@@ -69,8 +85,26 @@ public class PhoneController {
 	@GetMapping("/{id}")
 	public ResponseEntity<PhoneDTO> getPhone(@PathVariable("id") int imei) throws PhoneNotFoundException
 	{
+		PhoneDTO dto = service.getPhone(imei);
+		List<ServiceInstance> instancesProcessor = client.getInstances("processorMS");
+		if (instancesProcessor!=null && !instancesProcessor.isEmpty())
+		{
+			processorUri = instancesProcessor.get(0).getUri().toString();
+		}
+		List<ServiceInstance>  cameraInstances = client.getInstances("cameraMS");
+		if (cameraInstances!=null && !cameraInstances.isEmpty())
+		{
+			cameraUri = cameraInstances.get(0).getUri().toString();
+		}
+		ProcessDTO processdto = new RestTemplate()
+				.getForObject(processorUri + "/processors/" +dto.getProcess().getNo(), ProcessDTO.class);
+		dto.setProcess(processdto);
+		
+		List<Integer> cameras = template.getForObject( "http://MyloadBalancer/cameras/phones/" + dto.getImei(),List.class);
+		dto.setCameras(cameras);
+		
 		return ResponseEntity.status(HttpStatus.OK)
-				.body(service.getPhone(imei));
+				.body(dto);
 	}
 	
 	@GetMapping("/name")
