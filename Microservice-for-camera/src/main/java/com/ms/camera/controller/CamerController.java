@@ -1,6 +1,7 @@
 package com.ms.camera.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +49,26 @@ public class CamerController {
 	{
 	return ResponseEntity.status(HttpStatus.OK).body(service.getCamera(id));
 	}
-	@PutMapping("/{id}")
-	public ResponseEntity<String> updateCameraMegaPixelsById(@PathVariable int id,@RequestParam("mp") double mp)
+//	@PutMapping("/{id}")
+//	public ResponseEntity<String> updateCameraMegaPixelsById(@PathVariable int id,@RequestParam("mp") double mp)
+//	{
+//		service.updateCameraMpById(id, mp);
+//		return ResponseEntity.status(HttpStatus.OK)
+//				.body("Update Success with id : " + id + "  Mp : " + mp);
+//	}
+	@GetMapping("/phones/{phoneId}")
+	public ResponseEntity<List<Integer>> getByPhoneId(@PathVariable("phoneId") int phoneId)
 	{
-		service.updateCameraMpById(id, mp);
 		return ResponseEntity.status(HttpStatus.OK)
-				.body("Update Success with id : " + id + "  Mp : " + mp);
+				.body(service.geByPhoneId(phoneId)
+						.stream()
+						.map(c->
+						{
+							CameraDTO camdto = 	mapper.map(c, CameraDTO.class);
+							return camdto.getCamId();
+						})
+						
+						.collect(Collectors.toList()));
+		
 	}
 }

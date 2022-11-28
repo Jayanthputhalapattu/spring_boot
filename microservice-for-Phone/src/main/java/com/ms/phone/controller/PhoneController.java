@@ -51,11 +51,6 @@ public class PhoneController {
 	{
 		return ResponseEntity.status(HttpStatus.OK).body(service.getAllPhones());
 	}
-	
-//	public List<PhoneDTO> getAllPhones()
-//	{
-//		return service.getAllPhones();
-//	}
 	@DeleteMapping("/{id}")
 	public void deletePhone(@PathVariable("id") int id) throws PhoneNotFoundException
 	{
@@ -93,19 +88,19 @@ public class PhoneController {
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(service.findPhonesByName(map.values().iterator().next()));
 	}
-//	@PutMapping("/{id}/{processid}")
-//	public ResponseEntity<String> updateProcessById(@PathVariable("id") int id,@PathVariable("processid") int processid)
-//			throws PhoneNotFoundException,ProcessorNotFoundException
-//	{
-//		service.updateProcessById(id, processid);
-//		return ResponseEntity.status(HttpStatus.OK).body("update Success");
-//	}
-	
-	@PutMapping("/{phoneid}/camera/{cameraid}")
-	public ResponseEntity<String> addCameraById(@PathVariable("phoneid") int phoneid,@PathVariable("cameraid") int cameraid)
+	@PutMapping("/{id}/{processid}")
+	public ResponseEntity<String> updateProcessById(@PathVariable("id") int id,@PathVariable("processid") int processid)
+			throws PhoneNotFoundException
 	{
-//		service.updateCameraById(phoneid, cameraid);
-		return ResponseEntity.status(HttpStatus.OK)
-				.body("Data updated succesfully ,phoneid : "  + phoneid + " , cameraid : " + cameraid);
+		service.updateProcessById(id, processid);
+		return ResponseEntity.status(HttpStatus.OK).body("update Success");
 	}
+	
+//	@PutMapping("/{phoneid}/camera/{cameraid}")
+//	public ResponseEntity<String> addCameraById(@PathVariable("phoneid") int phoneid,@PathVariable("cameraid") int cameraid)
+//	{
+////		service.updateCameraById(phoneid, cameraid);
+//		return ResponseEntity.status(HttpStatus.OK)
+//				.body("Data updated succesfully ,phoneid : "  + phoneid + " , cameraid : " + cameraid);
+//	}
 }

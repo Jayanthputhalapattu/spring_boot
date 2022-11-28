@@ -22,10 +22,14 @@ import com.ms.processor.dto.ProcessDTO;
 import com.ms.processor.exceptionHandling.ProcessorNotFoundException;
 import com.ms.processor.service.ProcessServImpl;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+
 
 @RestController
 @RequestMapping("/processors")
 //@Validated
+@OpenAPIDefinition(info = @Info(title = "Processor Controller ; "))
 public class ProcessrController {
 	@Autowired
 	private ProcessServImpl service;

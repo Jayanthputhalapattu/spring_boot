@@ -17,42 +17,37 @@ import javax.validation.constraints.NotEmpty;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ms.phone.dto.PhoneDTO;
+import com.ms.phone.dto.ProcessDTO;
 
 
 
 @Entity
 public class Phone {
 	@Id
-	
     private int imei;
 //	@Column(name = "phone_number")
 	@NotEmpty(message ="{phone.not.empty}")
     private String phoneName;
 	@Column(name = "model_name")
     private String modelName;
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn
-	private Processr process;
+	@Column(name="processor_id",nullable = false)
+	private Integer processorId;
 	
-	@JsonIgnore
-	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "phones",cascade = CascadeType.ALL)
-	   private List<Camera> cameras = new ArrayList<>();
-	public Processr getProcess() {
-		return process;
+	public Integer getProcessorId() {
+		return processorId;
 	}
-	public void setProcess(Processr processDTO) {
-		this.process = processDTO;
+
+	public void setProcessorId(Integer processorId) {
+		this.processorId = processorId;
 	}
-	public Phone(int imei, String phoneName, String modelName, Processr process) {
-		super();
-		this.imei = imei;
-		this.phoneName = phoneName;
-		this.modelName = modelName;
-		this.process = process;
-	}
+
+
+
 	public int getImei() {
 		return imei;
 	}
+	
 	public void setImei(int imei) {
 		this.imei = imei;
 	}
@@ -72,26 +67,45 @@ public class Phone {
     {
     	super();
     }
-    public Phone(int imei, String phoneName, String modelName) {
+    
+    public Phone(int imei,  String phoneName, String modelName,
+			Integer processorId, List<Camera> cameras) {
+		super();
+		this.imei = imei;
+		this.phoneName = phoneName;
+		this.modelName = modelName;
+		this.processorId = processorId;
+	
+	}
+
+	public Phone(int imei, String phoneName, String modelName) {
 		super();
 		this.imei = imei;
 		this.phoneName = phoneName;
 		this.modelName = modelName;
 	}
-	public List<Camera> getCameras() {
-		return cameras;
+
+
+	public Phone(int imei, @NotEmpty(message = "{phone.not.empty}") String phoneName, String modelName,
+			Integer processorId) {
+		super();
+		this.imei = imei;
+		this.phoneName = phoneName;
+		this.modelName = modelName;
+		this.processorId = processorId;
 	}
-	public void setCameras(List<Camera> cameras) {
-		this.cameras = cameras;
-	}
-	@Override
-	public String toString() {
-		return "Phone [imei=" + imei + ", phoneName=" + phoneName + ", modelName=" + modelName + ", process=" + process
-				+ ", cameras=" + cameras + "]";
-	}
-	public void addCamera(Camera cam) {
-		cameras.add(cam);
+
+	public static PhoneDTO createPhoneDTO(Phone ph) {
+		PhoneDTO dto = new PhoneDTO();
+		dto.setImei(ph.getImei());
+		dto.setModelName(ph.getModelName());
+		dto.setPhoneName(ph.getPhoneName());
+//		dto.setProcess(null);
+		ProcessDTO process = new ProcessDTO();
+		process.setNo(ph.getProcessorId());
+		dto.setProcess(process);
+		
+		return dto;
 		
 	}
-	
 }

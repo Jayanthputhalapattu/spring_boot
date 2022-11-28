@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -20,65 +21,46 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 public class Camera {
 	@Id
-//	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
-	private double megaPixels;
-	private String manufacture;
-	private int cost;
 
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name="cameras_fixed",joinColumns = {@JoinColumn(name = "camera_id")}, inverseJoinColumns = {@JoinColumn(name = "phone_id")} )
-	private List<Phone> phones = new ArrayList<>();
-	public Camera() {
-		super();
-	}
-	public Camera(int id, double megaPixels, String manufacture, int cost) {
-		super();
-		this.id = id;
-		this.megaPixels = megaPixels;
-		this.manufacture = manufacture;
-		this.cost = cost;
-//		this.phone = phone;
-	}
+	@Column(name = "phone_id")
+	private int phoneId;
+	@Column(name = "cam_id")
+	private int camId;
 	public int getId() {
 		return id;
 	}
-	public double getMegaPixels() {
-		return megaPixels;
+	public int getPhoneId() {
+		return phoneId;
 	}
-	public String getManufacture() {
-		return manufacture;
-	}
-	public int getCost() {
-		return cost;
-	}
-	public List<Phone> getPhone() {
-		return phones;
+	public int getCamId() {
+		return camId;
 	}
 	public void setId(int id) {
 		this.id = id;
 	}
-	public void setMegaPixels(double megaPixels) {
-		this.megaPixels = megaPixels;
+	public void setPhoneId(int phoneId) {
+		this.phoneId = phoneId;
 	}
-	public void setManufacture(String manufacture) {
-		this.manufacture = manufacture;
-	}
-	public void setCost(int cost) {
-		this.cost = cost;
-	}
-	public void setPhone(List<Phone> phones) {
-		this.phones = phones;
+	public void setCamId(int camId) {
+		this.camId = camId;
 	}
 	@Override
 	public String toString() {
-		return "Camera [id=" + id + ", megaPixels=" + megaPixels + ", manufacture=" + manufacture + ", cost=" + cost
-				+ "]";
+		return "Camera [id=" + id + ", phoneId=" + phoneId + ", camId=" + camId + "]";
 	}
-	public void addPhone(Phone ph) {
-		// TODO Auto-generated method stub
-		phones.add(ph);
+	public Camera(int id, int phoneId, int camId) {
+		super();
+		this.id = id;
+		this.phoneId = phoneId;
+		this.camId = camId;
 	}
+	public Camera() {
+		super();
+	}
+    
+	
+	
 
-   
 }

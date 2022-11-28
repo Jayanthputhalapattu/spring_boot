@@ -1,6 +1,7 @@
 package com.ms.camera.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -29,17 +30,18 @@ public class CameraService {
   {
 	  repo.save(mapper.map(dto, Camera.class));
   }
-  public void updateMegapixelsByid(int id,double mp)
-  {
-	     repo.updateMegaPixelsById(id, mp);
-	     System.out.println("Update success with id : " + id + " Mp :" + mp);
-  }
+
   public CameraDTO getCamera(int id)
   {
 	  return mapper.map(repo.findById(id).get(),CameraDTO.class );
   }
-  public void updateCameraMpById(int id , double mp)
+//  public void updateCameraMpById(int id , double mp)
+//  {
+//	  repo.updateMegaPixelsById(id, mp);
+//  }
+  public List<Camera> geByPhoneId(int phoneId)
   {
-	  repo.updateMegaPixelsById(id, mp);
+	 Optional<List<Camera>> Optcameras =  repo.getByPhoneId(phoneId);
+	 return Optcameras.get();
   }
 }

@@ -25,10 +25,9 @@ public class Camera {
 	private double megaPixels;
 	private String manufacture;
 	private int cost;
-
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name="cameras_fixed",joinColumns = {@JoinColumn(name = "camera_id")}, inverseJoinColumns = {@JoinColumn(name = "phone_id")} )
-	private List<Phone> phones = new ArrayList<>();
+//	@ManyToMany(fetch = FetchType.EAGER)
+//	@JoinTable(name="cameras_fixed",joinColumns = {@JoinColumn(name = "camera_id")}, inverseJoinColumns = {@JoinColumn(name = "phone_id")} )
+//	private List<Integer> phones = new ArrayList<>();
 	public Camera() {
 		super();
 	}
@@ -52,9 +51,9 @@ public class Camera {
 	public int getCost() {
 		return cost;
 	}
-	public List<Phone> getPhone() {
-		return phones;
-	}
+//	public List<Phone> getPhone() {
+//		return phones;
+//	}
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -67,18 +66,18 @@ public class Camera {
 	public void setCost(int cost) {
 		this.cost = cost;
 	}
-	public void setPhone(List<Phone> phones) {
-		this.phones = phones;
-	}
+//	public void setPhone(List<Phone> phones) {
+//		this.phones = phones;
+//	}
 	@Override
 	public String toString() {
 		return "Camera [id=" + id + ", megaPixels=" + megaPixels + ", manufacture=" + manufacture + ", cost=" + cost
 				+ "]";
 	}
-	public void addPhone(Phone ph) {
-		// TODO Auto-generated method stub
-		phones.add(ph);
-	}
+//	public void addPhone(Phone ph) {
+//		// TODO Auto-generated method stub
+//		phones.add(ph);
+//	}
 
    
 }
