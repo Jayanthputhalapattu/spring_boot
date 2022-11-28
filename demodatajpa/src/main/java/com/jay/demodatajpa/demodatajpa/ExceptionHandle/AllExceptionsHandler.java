@@ -30,10 +30,10 @@ public class AllExceptionsHandler {
 	{
 		ErrorMessage errmsg = new ErrorMessage();
 		errmsg.setErrorCode(HttpStatus.BAD_REQUEST.value());
-//		errmsg.setMessage(e.getAllErrors().stream().filter("",(e1,e2)->e1+e2));
+//		errmsg.setMessage(e.getAllErrors().stream().filter("",(e1,e2)->e1 +e2));
 		errmsg.setMessage(e.getAllErrors().stream()
 				.map(ObjectError::getDefaultMessage)
-				.reduce("",(e1,e2)->e1+e2)
+				.reduce("",(e1,e2)->e1+ " ,  "+e2)
 				);
 		
 		return ResponseEntity.status(errmsg.getErrorCode()).body(errmsg);

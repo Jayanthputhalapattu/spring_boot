@@ -1,5 +1,6 @@
 package com.jay.demodatajpa.demodatajpa;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -14,11 +15,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.jay.demodatajpa.demodatajpa.dto.CameraDTO;
 import com.jay.demodatajpa.demodatajpa.dto.PhoneDTO;
 import com.jay.demodatajpa.demodatajpa.dto.ProcessDTO;
+import com.jay.demodatajpa.demodatajpa.entities.Camera;
 import com.jay.demodatajpa.demodatajpa.entities.Phone;
 import com.jay.demodatajpa.demodatajpa.entities.Processr;
 import com.jay.demodatajpa.demodatajpa.repo.ProcessServiceRepo;
+import com.jay.demodatajpa.demodatajpa.service.CameraService;
 import com.jay.demodatajpa.demodatajpa.service.PhoneServiceImpl;
 import com.jay.demodatajpa.demodatajpa.service.ProcessServImpl;
 
@@ -49,10 +53,14 @@ public class DemodatajpaApplication implements WebMvcConfigurer{
 	   service.addPhone(new PhoneDTO(9812,"Celkon","C7"));
 	   service.addPhone(new PhoneDTO(878,"Infix","pro 10",new ProcessDTO(1, "Snapdragon 645", 2000)));
 	   service.addPhone(new PhoneDTO(90,"Nokia","a 5",new ProcessDTO(1, "Snapdragon 645", 2000)));
-	   service.addPhone(new PhoneDTO(66,"Realme","9 pro plus" ,new ProcessDTO(81,"Octacore 890",8000)));
+	  
+//	   service.addPhone(new PhoneDTO(1266,"IQOO","10 SE" ,
+//			   new ProcessDTO(81,"Octacore 890",8000)
+//			   ,camList));
 	   service.addPhone(new PhoneDTO(169, "Samsung", "S22"));
-	   service.updateProcessById(909, 1);
-	   service.updateProcessById(981, 2);
+//	   service.updateProcessById(909, 1);
+//	   service.updateProcessById(981, 2);
+	   
 	   
 	   service.addPhone(new PhoneDTO(444, "Google", "Pixel S", new ProcessDTO(67, "G-NanoProcessor", 50000)));
 	   //	   System.out.println(service.getPhone(123));
@@ -63,7 +71,7 @@ public class DemodatajpaApplication implements WebMvcConfigurer{
 	   
 	   			//Update operation 
 	   service.updatePhone(1234, "9 pro");
-	   service.updateProcessById(169,2);
+//	   service.updateProcessById(169,2);
 	   
 	   
 	   			//Pagination and sorting
@@ -80,6 +88,7 @@ public class DemodatajpaApplication implements WebMvcConfigurer{
 	   			//Finding by phone name
 	    service.findByPhoneName("Samsung").forEach(ph->System.out.println("phname : " + ph)) ;
 	   
+//	    service.deletePhone(66);
 	   			
 	  
 	   
@@ -92,11 +101,15 @@ public class DemodatajpaApplication implements WebMvcConfigurer{
 	   			//Named Query and query operations
 	   service.findByProcess(1);
 	   			//Update operation
-	   service.updateProcessById(878, 2);
+//	   service.updateProcessById(878, 2);
 	   
-	   
-	   
-	   
+//	   Camera cam1 = new Camera(3,22.5, "Sony", 5999);
+//	   List<Camera> camList = Arrays.asList(cam1);
+          
+
+	   CameraService camservice = (CameraService)context.getBean("cameraservice");
+	   camservice.getAllCams().forEach(p->System.out.println(p));
+//	   camservice.updateMegapixelsByid(3, 48);
 	 //PRINTING AT END OF OPERATIONS
 	   System.out.println("PRINTING AT END OF ALL OPERATIONS : ");
 	   service.getAllPhones().forEach(p->System.out.println(p));

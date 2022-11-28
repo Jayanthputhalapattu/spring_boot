@@ -1,15 +1,22 @@
 package com.jay.demodatajpa.demodatajpa.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotEmpty;
 
 import org.springframework.validation.annotation.Validated;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 
@@ -26,6 +33,10 @@ public class Phone {
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn
 	private Processr process;
+	
+	@JsonIgnore
+	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "phones",cascade = CascadeType.ALL)
+	   private List<Camera> cameras = new ArrayList<>();
 	public Processr getProcess() {
 		return process;
 	}
@@ -38,13 +49,6 @@ public class Phone {
 		this.phoneName = phoneName;
 		this.modelName = modelName;
 		this.process = process;
-	}
-
-	
-	@Override
-	public String toString() {
-		return "Phone [imei=" + imei + ", phoneName=" + phoneName + ", modelName=" + modelName + ", process=" + process
-				+ "]";
 	}
 	public int getImei() {
 		return imei;
@@ -73,6 +77,21 @@ public class Phone {
 		this.imei = imei;
 		this.phoneName = phoneName;
 		this.modelName = modelName;
+	}
+	public List<Camera> getCameras() {
+		return cameras;
+	}
+	public void setCameras(List<Camera> cameras) {
+		this.cameras = cameras;
+	}
+	@Override
+	public String toString() {
+		return "Phone [imei=" + imei + ", phoneName=" + phoneName + ", modelName=" + modelName + ", process=" + process
+				+ ", cameras=" + cameras + "]";
+	}
+	public void addCamera(Camera cam) {
+		cameras.add(cam);
+		
 	}
 	
 }

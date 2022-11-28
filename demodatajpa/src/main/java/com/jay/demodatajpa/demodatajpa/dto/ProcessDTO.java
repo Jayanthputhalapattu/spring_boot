@@ -1,15 +1,20 @@
 package com.jay.demodatajpa.demodatajpa.dto;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+
+import org.springframework.beans.factory.annotation.Required;
 
 import com.jay.demodatajpa.demodatajpa.entities.Processr;
 
 public class ProcessDTO {
-	@NotNull(message = "{process.id.empty}")
+	@NotNull
   private int no;
 	@NotEmpty(message = "{processor_name_empty}")
   private String modelName;
-  private double cost;
+	@NotNull
+	@Min(1)
+  private int cost;
 public int getNo() {
 	return no;
 }
@@ -25,10 +30,10 @@ public void setModelName(String modelName) {
 public double getCost() {
 	return cost;
 }
-public void setCost(double cost) {
+public void setCost( int cost) {
 	this.cost = cost;
 }
-public ProcessDTO(int no, String modelName, double cost) {
+public ProcessDTO(int no, String modelName,int cost) {
 	super();
 	this.no = no;
 	this.modelName = modelName;

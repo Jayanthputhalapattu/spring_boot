@@ -1,5 +1,8 @@
 package com.jay.demodatajpa.demodatajpa.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -10,8 +13,23 @@ import com.jay.demodatajpa.demodatajpa.entities.Processr;
 
 
 public class PhoneDTO {
-	@NotNull
+	@NotNull(message = "{phone.id.empty}")
 	private int imei;
+	@NotEmpty(message = "{phone.name.empty},{inputs.not.entered}")
+	private String phoneName;
+	@NotEmpty(message = "{phone.model.empty}")
+	private String modelName;
+	private ProcessDTO process;
+	private List<CameraDTO> cameras = new ArrayList<>();
+	
+	
+	public List<CameraDTO> getCameras() {
+		return cameras;
+	}
+
+	public void setCameras(List<CameraDTO> cameras) {
+		this.cameras = cameras;
+	}
 
 	public ProcessDTO getProcess() {
 		return process;
@@ -21,16 +39,35 @@ public class PhoneDTO {
 		this.process = process;
 	}
 
-	@NotEmpty(message = "{phone.id.empty},{inputs.not.entered}")
-	private String phoneName;
-	private String modelName;
-	private ProcessDTO process;
 
+	public PhoneDTO() {
+		super();
+	}
+
+
+	public PhoneDTO(int imei, String phoneName, String modelName, ProcessDTO process) {
+		super();
+		this.imei = imei;
+		this.phoneName = phoneName;
+		this.modelName = modelName;
+		this.process = process;
+	}
 	public PhoneDTO(int imei, String phoneName, String modelName) {
 		super();
 		this.imei = imei;
 		this.phoneName = phoneName;
 		this.modelName = modelName;
+	}
+
+	public PhoneDTO( int imei,
+		String phoneName,
+			 String modelName, ProcessDTO process, List<CameraDTO> cameras) {
+		super();
+		this.imei = imei;
+		this.phoneName = phoneName;
+		this.modelName = modelName;
+		this.process = process;
+		this.cameras = cameras;
 	}
 
 	public int getImei() {
@@ -57,31 +94,15 @@ public class PhoneDTO {
 		this.modelName = modelName;
 	}
 
-	public PhoneDTO() {
-		super();
-	}
-
-//	public Phone createPhoneEntity(PhoneDTO dto) {
-//		Phone ph = new Phone();
-//		ph.setImei(dto.getImei());
-//		ph.setModelName(dto.getModelName());
-//		ph.setPhoneName(dto.getPhoneName());
-////		ph.setProcess(dto.getProcess());
-//		return ph;
-//	}
-
 	@Override
 	public String toString() {
 		return "PhoneDTO [imei=" + imei + ", phoneName=" + phoneName + ", modelName=" + modelName + ", process="
-				+ process + "]";
+				+ process + ", cameras=" + cameras + "]";
 	}
-
-	public PhoneDTO(int imei, String phoneName, String modelName, ProcessDTO process) {
-		super();
-		this.imei = imei;
-		this.phoneName = phoneName;
-		this.modelName = modelName;
-		this.process = process;
-	}
+ public void addCamera(CameraDTO dto)
+ {
+	 cameras.add(dto);
+ }
+	
 
 }
