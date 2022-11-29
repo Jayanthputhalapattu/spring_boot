@@ -38,7 +38,8 @@ import com.ms.phone.dto.PhoneDTO;
 import com.ms.phone.dto.ProcessDTO;
 import com.ms.phone.exceptionHanlding.PhoneNotFoundException;
 import com.ms.phone.service.PhoneServiceImpl;
-
+import io.github.resilience4j.*;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -50,6 +51,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @LoadBalancerClient(name="MyloadBalancer", configuration=LoadBalancerConfig.class)
 //@Validated
 public class PhoneController {
+	
+	private static Logger logger = LoggerFactory.getLogger(PhoneController.class);
 	private String processorUri;
 	private String cameraUri;
 	@Autowired
@@ -81,7 +84,7 @@ public class PhoneController {
 		return "data added successfully : + " + dto; 
 	}
 	
-	
+	@CircuitBreaker(name="phoneService" ,fallbackMethod = "phoneDetailsFallBack")
 	@GetMapping("/{id}")
 	public ResponseEntity<PhoneDTO> getPhone(@PathVariable("id") int imei) throws PhoneNotFoundException
 	{
@@ -137,4 +140,13 @@ public class PhoneController {
 //		return ResponseEntity.status(HttpStatus.OK)
 //				.body("Data updated succesfully ,phoneid : "  + phoneid + " , cameraid : " + cameraid);
 //	}
+	
+	public ResponseEntity<PhoneDTO> phoneDetailsFallBack(int imei,Throwable throwable)
+	
+	{
+	  	logger.info("=====> IN FALL BACK =====>");
+	  	System.out.println("Hello fallback");
+	  	return ResponseEntity.status(HttpStatus.OK)
+	  			.body(new PhoneDTO());
+	}
 }

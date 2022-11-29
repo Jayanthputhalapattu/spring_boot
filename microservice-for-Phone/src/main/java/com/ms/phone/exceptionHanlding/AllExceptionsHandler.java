@@ -41,13 +41,13 @@ public class AllExceptionsHandler {
 		
 	}
 	
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ErrorMessage> GeneralException(Exception e)
-	{
-		ErrorMessage errmsg = new ErrorMessage();
-		errmsg.setErrorCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-		errmsg.setMessage(e.getMessage());
-		
-		return ResponseEntity.status(errmsg.getErrorCode()).body(errmsg);
-	}
+//	@ExceptionHandler(Exception.class)
+//	public ResponseEntity<ErrorMessage> GeneralException(Exception e)
+//	{
+//		ErrorMessage errmsg = new ErrorMessage();
+//		errmsg.setErrorCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+//		errmsg.setMessage(e.getMessage());
+//		
+//		return ResponseEntity.status(errmsg.getErrorCode()).body(errmsg);
+//	}
 }
