@@ -37,6 +37,7 @@ import com.ms.phone.LoadBalancerConfig;
 import com.ms.phone.dto.PhoneDTO;
 import com.ms.phone.dto.ProcessDTO;
 import com.ms.phone.exceptionHanlding.PhoneNotFoundException;
+import com.ms.phone.service.PhoneCircuitBreakerService;
 import com.ms.phone.service.PhoneServiceImpl;
 import io.github.resilience4j.*;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -48,7 +49,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @RequestMapping("/phones")
 @OpenAPIDefinition(info = @Info(title = "Phone controller apis"))
 @EnableAutoConfiguration
-@LoadBalancerClient(name="MyloadBalancer", configuration=LoadBalancerConfig.class)
+//@LoadBalancerClient(name="MyloadBalancer", configuration=LoadBalancerConfig.class)
 //@Validated
 public class PhoneController {
 	
@@ -64,11 +65,24 @@ public class PhoneController {
 	private ModelMapper mapper;
     @Autowired
     private RestTemplate template;
+    @Autowired
+    PhoneCircuitBreakerService phoneCircuitBreakerService;
 	@GetMapping
 	@ApiResponse(description="Get all phones from the resp",responseCode = "900")
 	public ResponseEntity<List<PhoneDTO>>  getAllPhones()
 	{
-		return ResponseEntity.status(HttpStatus.OK).body(service.getAllPhones());
+		
+
+		List<PhoneDTO> listOfPhonedtos = service.getAllPhones().stream()
+		.map(phonedto->{
+			ProcessDTO pdto = phoneCircuitBreakerService.getProcessDTO(phonedto.getProcess().getNo()).getBody();
+			phonedto.setProcess(pdto);
+			List<Integer> cdto = phoneCircuitBreakerService.getCameras(phonedto.getImei()).getBody();
+			phonedto.setCameras(cdto);
+			return phonedto;
+		}).toList();
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(listOfPhonedtos);
 	}
 	@DeleteMapping("/{id}")
 	public void deletePhone(@PathVariable("id") int id) throws PhoneNotFoundException
@@ -84,26 +98,16 @@ public class PhoneController {
 		return "data added successfully : + " + dto; 
 	}
 	
-	@CircuitBreaker(name="phoneService" ,fallbackMethod = "phoneDetailsFallBack")
+//	@CircuitBreaker(name="phoneService" ,fallbackMethod = "phoneDetailsFallBack")
 	@GetMapping("/{id}")
 	public ResponseEntity<PhoneDTO> getPhone(@PathVariable("id") int imei) throws PhoneNotFoundException
 	{
 		PhoneDTO dto = service.getPhone(imei);
-		List<ServiceInstance> instancesProcessor = client.getInstances("processorMS");
-		if (instancesProcessor!=null && !instancesProcessor.isEmpty())
-		{
-			processorUri = instancesProcessor.get(0).getUri().toString();
-		}
-		List<ServiceInstance>  cameraInstances = client.getInstances("cameraMS");
-		if (cameraInstances!=null && !cameraInstances.isEmpty())
-		{
-			cameraUri = cameraInstances.get(0).getUri().toString();
-		}
-		ProcessDTO processdto = new RestTemplate()
-				.getForObject(processorUri + "/processors/" +dto.getProcess().getNo(), ProcessDTO.class);
+		
+		ProcessDTO processdto = phoneCircuitBreakerService.getProcessDTO(dto.getProcess().getNo()).getBody();
 		dto.setProcess(processdto);
 		
-		List<Integer> cameras = template.getForObject( "http://MyloadBalancer/cameras/phones/" + dto.getImei(),List.class);
+		List<Integer> cameras = phoneCircuitBreakerService.getCameras(imei).getBody();
 		dto.setCameras(cameras);
 		
 		return ResponseEntity.status(HttpStatus.OK)

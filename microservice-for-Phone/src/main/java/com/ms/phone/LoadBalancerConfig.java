@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 
 import reactor.core.publisher.Flux;
-@Component
+//@Component
 public class LoadBalancerConfig {
 	@Bean
 	@Primary

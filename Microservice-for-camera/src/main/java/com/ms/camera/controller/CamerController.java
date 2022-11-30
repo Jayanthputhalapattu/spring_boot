@@ -61,11 +61,7 @@ public class CamerController {
 	@GetMapping("/phones/{phoneId}")
 	public ResponseEntity<List<Integer>> getByPhoneId(@PathVariable("phoneId") int phoneId)
 	{
-		if(phoneId==1)
-		{
-			throw new RuntimeException();
-		}
-		
+	
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(service.geByPhoneId(phoneId)
 						.stream()
