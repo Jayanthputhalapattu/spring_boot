@@ -8,28 +8,29 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.ms.phone.dto.PhoneDTO;
 import com.ms.phone.dto.ProcessDTO;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.vavr.concurrent.Future;
 @Service
 public class PhoneCircuitBreakerService {
    
 	@Autowired
 	RestTemplate template;
 	@CircuitBreaker(name="phoneService")
-	public ResponseEntity<ProcessDTO> getProcessDTO(int processorId)
+	public Future<ProcessDTO> getProcessDTO(int processorId)
 	{
 	  ProcessDTO processdto = 	template.getForObject("http://processorMS/processors/" +processorId, ProcessDTO.class);
-	 System.out.println(processdto);
-	 return ResponseEntity.status(HttpStatus.OK)
-			  .body(processdto);
+//	 System.out.println(processdto);
+	 return Future.of(()->processdto);
 	}
 	@CircuitBreaker(name="phoneService")
-	public ResponseEntity<List<Integer>> getCameras(int imei)
+	public Future<List<Integer>> getCameras(int imei)
 	{
 		@SuppressWarnings("unchecked")
 	  List<Integer> cameras =  template.getForObject( "http://cameraMS/cameras/phones/" + imei,List.class);
-	  return ResponseEntity.status(HttpStatus.OK)
-			  .body(cameras);
+//	  System.out.println("http://processorMS");
+		return Future.of(()->cameras);
 	}
 }

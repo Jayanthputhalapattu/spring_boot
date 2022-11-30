@@ -44,6 +44,7 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.vavr.concurrent.Future;
 
 @RestController
 @RequestMapping("/phones")
@@ -75,10 +76,11 @@ public class PhoneController {
 
 		List<PhoneDTO> listOfPhonedtos = service.getAllPhones().stream()
 		.map(phonedto->{
-			ProcessDTO pdto = phoneCircuitBreakerService.getProcessDTO(phonedto.getProcess().getNo()).getBody();
-			phonedto.setProcess(pdto);
-			List<Integer> cdto = phoneCircuitBreakerService.getCameras(phonedto.getImei()).getBody();
-			phonedto.setCameras(cdto);
+			Future<ProcessDTO> pdto = phoneCircuitBreakerService.getProcessDTO(phonedto.getProcess().getNo());
+			
+			Future<List<Integer>> cdto = phoneCircuitBreakerService.getCameras(phonedto.getImei());
+			phonedto.setCameras(cdto.get());
+			phonedto.setProcess(pdto.get());
 			return phonedto;
 		}).toList();
 		return ResponseEntity.status(HttpStatus.OK)
@@ -104,11 +106,12 @@ public class PhoneController {
 	{
 		PhoneDTO dto = service.getPhone(imei);
 		
-		ProcessDTO processdto = phoneCircuitBreakerService.getProcessDTO(dto.getProcess().getNo()).getBody();
-		dto.setProcess(processdto);
+		Future<ProcessDTO> processdto = phoneCircuitBreakerService.getProcessDTO(dto.getProcess().getNo());
 		
-		List<Integer> cameras = phoneCircuitBreakerService.getCameras(imei).getBody();
-		dto.setCameras(cameras);
+		
+		Future<List<Integer>> cameras = phoneCircuitBreakerService.getCameras(imei);
+		dto.setCameras(cameras.get());
+		dto.setProcess(processdto.get());
 		
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(dto);
