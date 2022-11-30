@@ -55,19 +55,16 @@ import io.vavr.concurrent.Future;
 //@LoadBalancerClient(name="MyloadBalancer", configuration=LoadBalancerConfig.class)
 //@Validated
 public class PhoneController {
-	
+	@Autowired
+	private PhoneServiceImpl service;
 	private static Logger logger = LoggerFactory.getLogger(PhoneController.class);
-	private String processorUri;
-	private String cameraUri;
-	@Autowired
-     private PhoneServiceImpl service;
-	@Autowired
-	private DiscoveryClient client;
-//     private static Logger logger = LoggerFactory.getLogger(PhoneController.class);
-	@Autowired
-	private ModelMapper mapper;
+	
     @Autowired
-    private RestTemplate template;
+    PhoneProcessFeign phoneprocessFeign;
+    
+    @Autowired
+    CameraFeign cameraFeign;
+    
     @Autowired
     PhoneCircuitBreakerService phoneCircuitBreakerService;
 	@GetMapping
