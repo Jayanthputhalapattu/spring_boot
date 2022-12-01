@@ -1,0 +1,17 @@
+server:
+  port: 8030
+
+spring:
+  application:
+    name: cameraMS
+  cloud:
+    consul:
+      discovery: 
+        hostname: localhost
+      config:
+        enabled: true
+        prefixes: config
+        defaultContext: application
+        profileSeparator:  '::'
+        format: YAML
+        

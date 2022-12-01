@@ -13,9 +13,11 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.MatrixVariable;
@@ -26,30 +28,62 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.cloud.*;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClient;
 
+import com.ms.phone.LoadBalancerConfig;
 import com.ms.phone.dto.PhoneDTO;
+import com.ms.phone.dto.ProcessDTO;
 import com.ms.phone.exceptionHanlding.PhoneNotFoundException;
+import com.ms.phone.service.PhoneCircuitBreakerService;
 import com.ms.phone.service.PhoneServiceImpl;
-
+import io.github.resilience4j.*;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.vavr.concurrent.Future;
 
 @RestController
 @RequestMapping("/phones")
 @OpenAPIDefinition(info = @Info(title = "Phone controller apis"))
+@CrossOrigin
+@EnableAutoConfiguration
+//@LoadBalancerClient(name="MyloadBalancer", configuration=LoadBalancerConfig.class)
 //@Validated
 public class PhoneController {
 	@Autowired
-     private PhoneServiceImpl service;
-//     private static Logger logger = LoggerFactory.getLogger(PhoneController.class);
-	private ModelMapper mapper;
+	private PhoneServiceImpl service;
+	private static Logger logger = LoggerFactory.getLogger(PhoneController.class);
 	
+    @Autowired
+    PhoneProcessFeign phoneprocessFeign;
+    
+    @Autowired
+    CameraFeign cameraFeign;
+    
+    @Autowired
+    PhoneCircuitBreakerService phoneCircuitBreakerService;
 	@GetMapping
 	@ApiResponse(description="Get all phones from the resp",responseCode = "900")
 	public ResponseEntity<List<PhoneDTO>>  getAllPhones()
 	{
-		return ResponseEntity.status(HttpStatus.OK).body(service.getAllPhones());
+		
+
+		List<PhoneDTO> listOfPhonedtos = service.getAllPhones().stream()
+		.map(phonedto->{
+			Future<ProcessDTO> pdto = phoneCircuitBreakerService.getProcessDTO(phonedto.getProcess().getNo());
+			
+			Future<List<Integer>> cdto = phoneCircuitBreakerService.getCameras(phonedto.getImei());
+			phonedto.setCameras(cdto.get());
+			phonedto.setProcess(pdto.get());
+			return phonedto;
+		}).toList();
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(listOfPhonedtos);
 	}
 	@DeleteMapping("/{id}")
 	public void deletePhone(@PathVariable("id") int id) throws PhoneNotFoundException
@@ -65,12 +99,21 @@ public class PhoneController {
 		return "data added successfully : + " + dto; 
 	}
 	
-	
+//	@CircuitBreaker(name="phoneService" ,fallbackMethod = "phoneDetailsFallBack")
 	@GetMapping("/{id}")
 	public ResponseEntity<PhoneDTO> getPhone(@PathVariable("id") int imei) throws PhoneNotFoundException
 	{
+		PhoneDTO dto = service.getPhone(imei);
+		
+		Future<ProcessDTO> processdto = phoneCircuitBreakerService.getProcessDTO(dto.getProcess().getNo());
+		
+		
+		Future<List<Integer>> cameras = phoneCircuitBreakerService.getCameras(imei);
+		dto.setCameras(cameras.get());
+		dto.setProcess(processdto.get());
+		
 		return ResponseEntity.status(HttpStatus.OK)
-				.body(service.getPhone(imei));
+				.body(dto);
 	}
 	
 	@GetMapping("/name")
@@ -103,4 +146,13 @@ public class PhoneController {
 //		return ResponseEntity.status(HttpStatus.OK)
 //				.body("Data updated succesfully ,phoneid : "  + phoneid + " , cameraid : " + cameraid);
 //	}
+	
+	public ResponseEntity<PhoneDTO> phoneDetailsFallBack(int imei,Throwable throwable)
+	
+	{
+	  	logger.info("=====> IN FALL BACK =====>");
+	  	System.out.println("Hello fallback");
+	  	return ResponseEntity.status(HttpStatus.OK)
+	  			.body(new PhoneDTO());
+	}
 }

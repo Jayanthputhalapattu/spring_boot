@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +26,7 @@ import com.ms.camera.service.CameraService;
 
 @RestController
 @RequestMapping("/cameras")
+@CrossOrigin
 public class CamerController {
   
 	@Autowired
@@ -59,6 +61,7 @@ public class CamerController {
 	@GetMapping("/phones/{phoneId}")
 	public ResponseEntity<List<Integer>> getByPhoneId(@PathVariable("phoneId") int phoneId)
 	{
+	
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(service.geByPhoneId(phoneId)
 						.stream()

@@ -1,0 +1,17 @@
+server:
+  port: 8010
+
+spring:
+  application:
+    name: phoneMS
+  cloud:
+    consul:
+      discovery: 
+        hostname: localhost
+      config:
+        enabled: true
+        prefixes: config
+        defaultContext: application
+        profileSeparator:  '::'
+        format: YAML
+        

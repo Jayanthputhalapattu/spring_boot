@@ -1,0 +1,21 @@
+spring: 
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: phoneMS
+          uri: lb://phoneMS
+          predicates:
+            - Path=/phones/**
+        - id: processorMS
+          uri: lb://processorMS
+          predicates:
+            - Path=/processors/**
+        - id: cameraMS
+          uri: lb://cameraMS
+          predicates:
+            - Path=/cameras/**
+         
+      
